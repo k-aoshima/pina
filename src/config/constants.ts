@@ -1,3 +1,7 @@
+/** GitHub Pages など base がある環境でモデルパスを解決する */
+export const modelAssetUrl = (path: string): string =>
+  `${import.meta.env.BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`
+
 export const COLORS = {
   pinaYellow: '#FFD60A',
   pinaNavy: '#1E3A8A',

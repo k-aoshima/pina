@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Canvas } from '@react-three/fiber'
 import type { Group } from 'three'
+import { modelAssetUrl } from '../../config/constants'
 import { ModelMesh } from './ModelMesh'
 
 const ROTATE_SPEED = 0.35
@@ -10,7 +11,7 @@ const MODEL_SCALE = 0.4
 const RESET_Y = -1.5
 const START_Y = 1.3
 
-const COLORS = ['#A855F7', '#10B981', '#F59E0B', '#EC4899', '#3B82F6', '#8B5CF6', '#14B8A6', '#F97316', '#EF4444', '#06B6D4']
+const COLORS = ['#2D1C3C', '#10B981', '#F59E0B', '#EC4899', '#3B82F6', '#8B5CF6', '#14B8A6', '#F97316', '#EF4444', '#06B6D4']
 const X_POSITIONS = [-0.85, -0.6, -0.35, -0.1, 0.15, 0.4, 0.65, 0.9]
 const FALL_SPEEDS = [0.12, 0.14, 0.16, 0.18, 0.2, 0.15, 0.13, 0.19, 0.17, 0.21]
 
@@ -28,7 +29,11 @@ function createToys(): ToyConfig[] {
   const toys: ToyConfig[] = []
   for (let i = 0; i < count; i++) {
     const initialY = START_Y - (i / (count - 1)) * range
-    const modelUrls = ['/models/FanFan.stl', '/models/Rabbit.stl', '/models/Tako.glb']
+    const modelUrls = [
+      modelAssetUrl('/models/FanFan.stl'),
+      modelAssetUrl('/models/Rabbit.stl'),
+      modelAssetUrl('/models/Tako.glb'),
+    ]
     const mi = i % modelUrls.length
     const ci = i % COLORS.length
     const xi = i % X_POSITIONS.length

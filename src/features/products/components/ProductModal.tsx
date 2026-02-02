@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useProductStore } from '../stores/useProductStore'
 import { formatPrice } from '../../../utils/format'
+import { modelAssetUrl } from '../../../config/constants'
 import { Modal } from '../../../components/ui/Modal'
 import { Button } from '../../../components/ui/Button'
 import { ModelView360 } from '../../../components/three/ModelView360'
@@ -43,7 +44,7 @@ export function ProductModal() {
         {selectedProduct.modelUrl ? (
           <div className="rounded-2xl border-4 border-black overflow-hidden">
             <ModelView360
-              modelUrl={selectedProduct.modelUrl}
+              modelUrl={modelAssetUrl(selectedProduct.modelUrl)}
               color={viewColor}
               offsetY={selectedProduct.modelUrl.toLowerCase().includes('fanfan') ? -0.25 : undefined}
             />

@@ -3,6 +3,7 @@ import type { Product } from '../../../types'
 import { useProductStore } from '../stores/useProductStore'
 import { formatPrice } from '../../../utils/format'
 import { CategoryBadge } from './CategoryBadge'
+import { modelAssetUrl } from '../../../config/constants'
 import { cn } from '../../../utils/cn'
 import { ModelView360 } from '../../../components/three/ModelView360'
 
@@ -31,7 +32,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {product.modelUrl ? (
           <div className="h-full w-full overflow-hidden rounded-2xl border-4 border-black bg-gray-100">
             <ModelView360
-              modelUrl={product.modelUrl}
+              modelUrl={modelAssetUrl(product.modelUrl)}
               color={product.color}
               interactive={false}
               offsetY={product.modelUrl.toLowerCase().includes('fanfan') ? -0.25 : undefined}
