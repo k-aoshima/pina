@@ -26,9 +26,16 @@ function Scene({
 }) {
   return (
     <>
-      <ambientLight intensity={0.8} />
-      <directionalLight position={[5, 5, 5]} intensity={1.2} />
-      <directionalLight position={[-5, -5, 5]} intensity={0.4} />
+      <ambientLight intensity={0.9} />
+      <hemisphereLight
+        args={['#ffffff', '#666666', 1.0]}
+        position={[0, 2, 0]}
+      />
+      <directionalLight position={[0, 5, 0]} intensity={0.8} />
+      <directionalLight position={[0, 0, 5]} intensity={0.7} />
+      <directionalLight position={[0, 0, -5]} intensity={0.7} />
+      <directionalLight position={[-4, 2, 0]} intensity={0.5} />
+      <directionalLight position={[4, 2, 0]} intensity={0.5} />
       <group position={[0, offsetY, 0]}>
         <Suspense fallback={null}>
           <ModelMesh url={modelUrl} color={color} />

@@ -4,14 +4,18 @@ import type { Product } from '../../../types'
 interface ProductState {
   selectedProduct: Product | null
   isModalOpen: boolean
+  /** 商品ごとに360°ビューで選択した色（カードプレビューにも反映） */
+  selectedViewColorByProductId: Record<string, string>
   openModal: (product: Product) => void
   closeModal: () => void
   clearProduct: () => void
+  setSelectedViewColor: (productId: string, color: string) => void
 }
 
 export const useProductStore = create<ProductState>()((set) => ({
   selectedProduct: null,
   isModalOpen: false,
+  selectedViewColorByProductId: {},
 
   openModal: (product) =>
     set({
@@ -28,4 +32,12 @@ export const useProductStore = create<ProductState>()((set) => ({
     set({
       selectedProduct: null,
     }),
+
+  setSelectedViewColor: (productId, color) =>
+    set((state) => ({
+      selectedViewColorByProductId: {
+        ...state.selectedViewColorByProductId,
+        [productId]: color,
+      },
+    })),
 }))

@@ -1,9 +1,9 @@
 name: Deploy to GitHub Pages
 
+# main に push された時だけ実行（PR を main にマージした時を含む）
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read

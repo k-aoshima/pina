@@ -13,6 +13,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const openModal = useProductStore((s) => s.openModal)
+  const selectedViewColorByProductId = useProductStore((s) => s.selectedViewColorByProductId)
+  const previewColor = selectedViewColorByProductId[product.id] ?? product.color
 
   return (
     <article className="flex flex-col rounded-xl md:rounded-2xl border-4 md:border-6 border-black bg-white shadow-brutal overflow-hidden transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-brutal-sm active:scale-[0.99]">
@@ -33,7 +35,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="h-full w-full overflow-hidden rounded-2xl border-4 border-black bg-gray-100">
             <ModelView360
               modelUrl={modelAssetUrl(product.modelUrl)}
-              color={product.color}
+              color={previewColor}
               interactive={false}
               offsetY={product.modelUrl.toLowerCase().includes('fanfan') ? -0.25 : undefined}
               className="!aspect-square h-full w-full"

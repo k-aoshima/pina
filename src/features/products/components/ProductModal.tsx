@@ -19,13 +19,16 @@ export function ProductModal() {
   const isModalOpen = useProductStore((s) => s.isModalOpen)
   const closeModal = useProductStore((s) => s.closeModal)
   const clearProduct = useProductStore((s) => s.clearProduct)
+  const selectedViewColorByProductId = useProductStore((s) => s.selectedViewColorByProductId)
+  const setSelectedViewColor = useProductStore((s) => s.setSelectedViewColor)
   const [viewColor, setViewColor] = useState<string>(VIEW_COLORS[0].hex)
 
   useEffect(() => {
     if (selectedProduct?.modelUrl) {
-      setViewColor(selectedProduct.color)
+      const stored = selectedProduct?.id && selectedViewColorByProductId[selectedProduct.id]
+      setViewColor(stored ?? selectedProduct.color)
     }
-  }, [selectedProduct?.id, selectedProduct?.color, selectedProduct?.modelUrl])
+  }, [selectedProduct?.id, selectedProduct?.color, selectedProduct?.modelUrl, selectedViewColorByProductId])
 
   const handleClose = () => {
     closeModal()
@@ -55,7 +58,10 @@ export function ProductModal() {
                   key={c.hex}
                   type="button"
                   title={c.name}
-                  onClick={() => setViewColor(c.hex)}
+                  onClick={() => {
+                    setViewColor(c.hex)
+                    setSelectedViewColor(selectedProduct.id, c.hex)
+                  }}
                   className="h-8 w-8 shrink-0 rounded-full border-2 border-black shadow-brutal-sm transition-transform hover:scale-110 active:scale-95"
                   style={{ backgroundColor: c.hex }}
                   aria-label={c.name}
