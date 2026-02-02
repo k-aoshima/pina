@@ -1,0 +1,43 @@
+import type { Product } from '../../../types'
+
+export const products: Product[] = [
+  {
+    id: '1',
+    name: 'RABBIT FANG',
+    subtitle: 'Blue Lavender Edition',
+    category: 'ORIGINALS',
+    price: 8800,
+    color: '#A855F7',
+    bgColor: 'bg-purple-500',
+    image: '/figures/rabbit-fang.png',
+    description: 'ブルーラベンダーカラーのオリジナルフィギュア',
+    purchaseUrl: 'https://example.com/product/rabbit-fang',
+    modelUrl: '/models/Rabbit.stl',
+  },
+  {
+    id: '2',
+    name: 'PROPELLER PANDA',
+    subtitle: 'Sky High Series',
+    category: 'LIMITED',
+    price: 12000,
+    color: '#10B981',
+    bgColor: 'bg-green-500',
+    image: '/figures/propeller-panda.png',
+    description: 'プロペラ付きパンダの限定シリーズ',
+    purchaseUrl: 'https://example.com/product/propeller-panda',
+    modelUrl: '/models/FanFan.stl',
+  },
+  {
+    id: '3',
+    name: 'TAKO SUIHAN',
+    subtitle: 'Classic Logo Vinyl',
+    category: 'SOFT VINYL',
+    price: 3500,
+    color: '#FB923C',
+    bgColor: 'bg-orange-500',
+    image: '/figures/tako-suihan.png',
+    description: 'たこすいかんのソフトビニールフィギュア',
+    purchaseUrl: 'https://example.com/product/tako-suihan',
+    modelUrl: '/models/Tako.glb',
+  },
+]
