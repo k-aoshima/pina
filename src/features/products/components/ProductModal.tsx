@@ -50,6 +50,7 @@ export function ProductModal() {
               modelUrl={modelAssetUrl(selectedProduct.modelUrl)}
               color={viewColor}
               offsetY={selectedProduct.modelUrl.toLowerCase().includes('fanfan') ? -0.25 : undefined}
+              interactive={true}
             />
             <div className="flex flex-wrap items-center justify-center gap-2 border-t-4 border-black bg-gray-50 px-3 py-3">
               <span className="mr-1 text-xs font-bold text-gray-600">カラー:</span>

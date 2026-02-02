@@ -24,6 +24,8 @@ function Scene({
   offsetY?: number
   interactive?: boolean
 }) {
+  const speed = interactive ? 1.2 : 1.8
+
   return (
     <>
       <ambientLight intensity={0.9} />
@@ -48,17 +50,28 @@ function Scene({
         minDistance={interactive ? 1 : 2}
         maxDistance={interactive ? 4 : 2}
         autoRotate
-        autoRotateSpeed={interactive ? 0.8 : 1.2}
+        autoRotateSpeed={speed}
       />
     </>
   )
 }
 
-export function ModelView360({ modelUrl, className = '', color, offsetY, interactive = true }: ModelView360Props) {
+export function ModelView360({
+  modelUrl,
+  className = '',
+  color,
+  offsetY,
+  interactive = true,
+}: ModelView360Props) {
   return (
     <div className={`aspect-video w-full overflow-hidden rounded-2xl bg-gray-100 ${className}`}>
       <Canvas camera={{ position: [0, 0, 2], fov: 45 }} gl={{ antialias: true }}>
-        <Scene modelUrl={modelUrl} color={color} offsetY={offsetY} interactive={interactive} />
+        <Scene
+          modelUrl={modelUrl}
+          color={color}
+          offsetY={offsetY}
+          interactive={interactive}
+        />
       </Canvas>
     </div>
   )
