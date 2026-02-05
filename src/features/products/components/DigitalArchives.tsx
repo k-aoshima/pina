@@ -17,10 +17,10 @@ export function DigitalArchives() {
   return (
     <section
       id="digital-archives"
-      className="mx-auto max-w-6xl px-4 py-12 md:py-16"
+      className="box-border w-screen overflow-x-clip pl-3 pr-6 py-8 sm:pl-4 sm:pr-6 sm:py-12 md:px-6 md:py-16"
     >
-      <div className="rounded-2xl md:rounded-3xl border-4 md:border-8 border-black bg-white p-4 sm:p-8 shadow-brutal-lg md:p-12">
-        <h2 className="font-black uppercase text-4xl sm:text-5xl md:text-6xl text-black border-b-4 md:border-b-8 border-black pb-4">
+      <div className="mx-auto box-border w-full max-w-6xl rounded-xl border-2 border-black bg-white p-4 shadow-brutal sm:rounded-2xl sm:border-4 sm:p-10 sm:shadow-brutal md:rounded-3xl md:border-8 md:p-14 md:shadow-brutal-lg">
+        <h2 className="break-words font-black uppercase text-3xl text-black border-b-2 border-black pb-3 sm:text-4xl sm:border-b-4 sm:pb-4 md:border-b-8 md:text-6xl">
           DIGITAL ARCHIVES
         </h2>
 
@@ -29,7 +29,7 @@ export function DigitalArchives() {
             <p className="font-bold text-gray-500">読み込み中...</p>
           </div>
         ) : (
-          <div className="mt-8">
+          <div className="mt-6 box-border w-full sm:mt-8">
             <ProductGrid products={products} />
           </div>
         )}

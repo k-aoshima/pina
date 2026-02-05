@@ -46,13 +46,15 @@ export function ProductModal() {
       <div className="flex flex-col gap-6">
         {selectedProduct.modelUrl ? (
           <div className="rounded-2xl border-4 border-black overflow-hidden">
-            <ModelView360
-              modelUrl={modelAssetUrl(selectedProduct.modelUrl)}
-              color={viewColor}
-              offsetY={selectedProduct.modelUrl.toLowerCase().includes('fanfan') ? -0.25 : undefined}
-              interactive={true}
-            />
-            <div className="flex flex-wrap items-center justify-center gap-2 border-t-4 border-black bg-gray-50 px-3 py-3">
+            <div className="h-[55vh]">
+              <ModelView360
+                modelUrl={modelAssetUrl(selectedProduct.modelUrl)}
+                color={viewColor}
+                offsetY={selectedProduct.modelUrl.toLowerCase().includes('fanfan') ? -0.25 : undefined}
+                interactive={true}
+              />
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3 border-t-4 border-black bg-gray-50 px-4 py-4">
               <span className="mr-1 text-xs font-bold text-gray-600">カラー:</span>
               {VIEW_COLORS.map((c) => (
                 <button

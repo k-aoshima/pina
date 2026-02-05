@@ -9,7 +9,7 @@ export function CategoryBadge({ category, className }: CategoryBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-block rounded-lg border-2 border-black bg-white px-2 py-1 text-xs font-bold uppercase text-black',
+        'inline-block rounded border border-black bg-white px-2 py-1 text-xs font-bold uppercase text-black sm:rounded-lg sm:border-2',
         className
       )}
     >

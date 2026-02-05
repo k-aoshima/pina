@@ -17,22 +17,23 @@ export function ProductCard({ product }: ProductCardProps) {
   const previewColor = selectedViewColorByProductId[product.id] ?? product.color
 
   return (
-    <article className="flex flex-col rounded-xl md:rounded-2xl border-4 md:border-6 border-black bg-white shadow-brutal overflow-hidden transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-brutal-sm active:scale-[0.99]">
-      <div className="flex items-center justify-between gap-2 border-b-4 border-black p-3">
+    <article className="box-border flex w-full flex-col rounded-lg border-2 border-black bg-white shadow-brutal-sm sm:rounded-xl sm:border-4 sm:shadow-brutal-sm md:rounded-2xl md:border-6 md:shadow-brutal">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 border-b-2 border-black p-2.5 sm:border-b-4 sm:p-4">
         <CategoryBadge category={product.category} />
         <button
           type="button"
           onClick={() => openModal(product)}
-          className="flex items-center gap-2 rounded-lg border-4 border-black bg-blue-500 px-3 py-2 font-bold uppercase text-white shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all active:scale-95"
+          className="flex shrink-0 items-center gap-1.5 rounded-md border-2 border-black bg-blue-500 px-2 py-1.5 text-xs font-bold uppercase text-white shadow-brutal-sm transition-transform hover:scale-105 active:scale-95 sm:gap-2 sm:rounded-lg sm:border-4 sm:px-3 sm:py-2 sm:text-sm"
         >
-          <Eye size={16} />
+          <Eye size={14} className="sm:hidden" />
+          <Eye size={16} className="hidden sm:block" />
           360° VIEW
         </button>
       </div>
 
-      <div className="relative aspect-square p-4">
+      <div className="aspect-square w-full p-2.5 sm:p-4 md:p-5">
         {product.modelUrl ? (
-          <div className="h-full w-full overflow-hidden rounded-2xl border-4 border-black bg-gray-100">
+          <div className="h-full w-full overflow-hidden rounded-lg border-2 border-black bg-gray-100 sm:rounded-xl sm:border-4 md:rounded-2xl" style={{ touchAction: 'auto' }}>
             <ModelView360
               modelUrl={modelAssetUrl(product.modelUrl)}
               color={previewColor}
@@ -44,7 +45,7 @@ export function ProductCard({ product }: ProductCardProps) {
         ) : (
           <div
             className={cn(
-              'flex h-full w-full items-center justify-center rounded-2xl border-4 border-black',
+              'flex h-full w-full items-center justify-center rounded-lg border-2 border-black sm:rounded-xl sm:border-4 md:rounded-2xl',
               product.bgColor
             )}
           >
@@ -53,23 +54,23 @@ export function ProductCard({ product }: ProductCardProps) {
             </span>
           </div>
         )}
-        <div className="absolute bottom-6 right-6 rotate-[-5deg] rounded border-2 border-black bg-white px-3 py-2 shadow-brutal-sm">
-          <span className="font-black text-xl text-black">
+      </div>
+
+      <div className="flex flex-1 flex-col gap-1 border-t-2 border-black p-3 sm:border-t-4 sm:p-5">
+        <div className="flex items-baseline justify-between gap-2">
+          <h3 className="font-black uppercase text-lg text-black sm:text-xl md:text-2xl">
+            {product.name}
+          </h3>
+          <span className="shrink-0 font-black text-lg text-black sm:text-xl md:text-2xl">
             {formatPrice(product.price)}
           </span>
         </div>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-1 border-t-4 border-black p-4">
-        <h3 className="font-black uppercase text-2xl text-black">
-          {product.name}
-        </h3>
-        <p className="text-sm text-gray-400">{product.subtitle}</p>
+        <p className="text-xs text-gray-400 sm:text-sm">{product.subtitle}</p>
         <a
           href={product.purchaseUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex w-full justify-center rounded-xl border-4 border-black bg-pina-yellow px-4 py-3 font-bold uppercase text-black shadow-brutal-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all active:scale-95"
+          className="mt-3 inline-flex w-full justify-center rounded-lg border-2 border-black bg-pina-yellow px-3 py-2 text-sm font-bold uppercase text-black shadow-brutal-sm transition-transform hover:scale-105 active:scale-95 sm:mt-4 sm:rounded-xl sm:border-4 sm:px-4 sm:py-3 sm:text-base"
         >
           購入サイトへ
         </a>

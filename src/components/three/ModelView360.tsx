@@ -64,8 +64,15 @@ export function ModelView360({
   interactive = true,
 }: ModelView360Props) {
   return (
-    <div className={`aspect-video w-full overflow-hidden rounded-2xl bg-gray-100 ${className}`}>
-      <Canvas camera={{ position: [0, 0, 2], fov: 45 }} gl={{ antialias: true }}>
+    <div 
+      className={`h-full w-full overflow-hidden rounded-2xl bg-gray-100 ${className}`}
+      style={interactive ? {} : { touchAction: 'auto' }}
+    >
+      <Canvas 
+        camera={{ position: [0, 0, 2], fov: 45 }} 
+        gl={{ antialias: true }}
+        style={interactive ? {} : { pointerEvents: 'none', touchAction: 'auto' }}
+      >
         <Scene
           modelUrl={modelUrl}
           color={color}

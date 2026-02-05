@@ -7,9 +7,9 @@ export function Header() {
   const toggleMobileMenu = useUIStore((s) => s.toggleMobileMenu)
 
   return (
-    <header className="sticky top-0 z-40 w-full px-4 py-4 md:px-6">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex items-center justify-between gap-2 sm:gap-4 rounded-xl md:rounded-2xl border-4 md:border-[6px] border-black bg-pina-yellow px-3 py-2 shadow-brutal md:px-6 md:py-4">
+    <header className="sticky top-0 z-40 w-full min-w-0 px-4 py-4 md:px-6">
+      <div className="mx-auto min-w-0 max-w-6xl">
+        <div className="flex min-w-0 items-center justify-between gap-2 rounded-xl border-4 border-black bg-pina-yellow px-3 py-2 shadow-brutal sm:gap-4 md:rounded-2xl md:border-[6px] md:px-6 md:py-4">
           <a
             href="#"
             className="flex shrink-0 items-center rounded-lg border-4 border-black bg-pina-navy px-4 py-2 font-black italic text-pina-yellow text-xl md:text-2xl"
