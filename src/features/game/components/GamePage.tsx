@@ -513,16 +513,16 @@ export function GamePage() {
         </Link>
       </div>
 
-      <div className="absolute top-4 left-1 right-1 md:top-10 md:left-0 md:right-0 flex justify-center pointer-events-none z-10">
-        <div className="bg-white border-2 md:border-4 border-black px-2 py-1 md:px-8 md:py-3 shadow-brutal-sm md:shadow-brutal flex items-center gap-2 md:gap-12">
+      <div className="absolute top-2 right-2 md:top-4 md:right-4 left-auto flex justify-end pointer-events-none z-10">
+        <div className="bg-white/95 border-2 md:border-4 border-black px-2 py-1 md:px-4 md:py-2 shadow-brutal-sm md:shadow-brutal flex items-center gap-1.5 md:gap-4">
           <div className="flex flex-col items-center min-w-0">
-            <span className="text-[7px] md:text-[10px] font-black uppercase opacity-40">Score</span>
-            <span className="font-black text-lg md:text-5xl leading-none truncate">{score}</span>
+            <span className="text-[6px] md:text-[10px] font-black uppercase opacity-40">Score</span>
+            <span className="font-black text-sm md:text-2xl leading-none truncate">{score}</span>
           </div>
-          <div className="w-px h-5 md:h-12 bg-black opacity-10 shrink-0" />
+          <div className="w-px h-4 md:h-8 bg-black opacity-10 shrink-0" />
           <div className="flex flex-col items-center min-w-0">
-            <span className="text-[7px] md:text-[10px] font-black uppercase opacity-40">High</span>
-            <span className="font-black text-lg md:text-5xl leading-none text-orange-500 truncate">{highScore}</span>
+            <span className="text-[6px] md:text-[10px] font-black uppercase opacity-40">High</span>
+            <span className="font-black text-sm md:text-2xl leading-none text-orange-500 truncate">{highScore}</span>
           </div>
         </div>
       </div>
