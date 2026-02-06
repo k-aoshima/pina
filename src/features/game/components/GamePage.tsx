@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import * as THREE from 'three'
 import { useGameStore, type RunnerModel } from '../stores/useGameStore'
@@ -15,6 +15,7 @@ const OBSTACLE_MIN_DISTANCE = 12 // 直前の障害物がこのXより左にな�
 const JUMP_FORCE = 0.26
 const GRAVITY = 0.013
 const MAX_JUMPS = 2
+const MOBILE_MAX_WIDTH = 768
 
 const RUNNER_OPTIONS: { id: RunnerModel; label: string }[] = [
   { id: 'FanFan', label: 'FanFan' },
@@ -75,6 +76,26 @@ export function GamePage() {
     gameState: 'START',
     lastObstacleScaleY: 1,
   })
+
+  const [showRotateModal, setShowRotateModal] = useState(false)
+
+  const updateRotateModal = () => {
+    const w = window.innerWidth
+    const h = window.innerHeight
+    const isNarrow = w <= MOBILE_MAX_WIDTH
+    const isPortrait = h > w
+    setShowRotateModal(isNarrow && isPortrait)
+  }
+
+  useEffect(() => {
+    updateRotateModal()
+    window.addEventListener('resize', updateRotateModal)
+    window.addEventListener('orientationchange', updateRotateModal)
+    return () => {
+      window.removeEventListener('resize', updateRotateModal)
+      window.removeEventListener('orientationchange', updateRotateModal)
+    }
+  }, [])
 
   const startGame = () => {
     startGameStore()
@@ -437,6 +458,40 @@ export function GamePage() {
 
   return (
     <div className="w-full h-screen bg-pina-yellow font-sans overflow-hidden select-none relative">
+      {showRotateModal && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-pina-yellow/95 p-6"
+          aria-modal="true"
+          role="alert"
+          aria-live="polite"
+        >
+          <div className="bg-white border-4 md:border-8 border-black p-4 md:p-8 max-w-sm w-full shadow-brutal-lg text-center">
+            <div className="mb-4 md:mb-6 flex justify-center">
+              <svg
+                className="w-16 h-16 md:w-24 md:h-24 text-pina-navy"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            </div>
+            <p className="text-base md:text-xl font-black text-black mb-2">
+              横向きに回転してください
+            </p>
+            <p className="text-xs md:text-sm font-bold text-black/70">
+              Please rotate your device to landscape
+            </p>
+          </div>
+        </div>
+      )}
+
       <div
         ref={mountRef}
         className="w-full h-full absolute inset-0"
@@ -449,39 +504,39 @@ export function GamePage() {
         style={{ cursor: status === 'playing' ? 'pointer' : 'default' }}
       />
 
-      <div className="absolute top-4 left-4 z-50 pointer-events-auto">
+      <div className="absolute top-2 left-2 md:top-4 md:left-4 z-50 pointer-events-auto">
         <Link
           to={ROUTES.HOME}
-          className="inline-block bg-pina-navy text-pina-yellow px-6 py-3 border-4 border-black font-black italic text-xl shadow-brutal hover:translate-x-0.5 hover:translate-y-0.5 transition-all active:scale-95"
+          className="inline-block bg-pina-navy text-pina-yellow px-3 py-1.5 md:px-6 md:py-3 border-2 md:border-4 border-black font-black italic text-sm md:text-xl shadow-brutal hover:translate-x-0.5 hover:translate-y-0.5 transition-all active:scale-95"
         >
           ← HOME
         </Link>
       </div>
 
-      <div className="absolute top-10 left-0 right-0 flex justify-center pointer-events-none z-10">
-        <div className="bg-white border-4 border-black px-8 py-3 shadow-brutal flex items-center gap-12">
+      <div className="absolute top-6 left-0 right-0 md:top-10 flex justify-center pointer-events-none z-10">
+        <div className="bg-white border-2 md:border-4 border-black px-3 py-1.5 md:px-8 md:py-3 shadow-brutal flex items-center gap-4 md:gap-12">
           <div className="flex flex-col items-center">
-            <span className="text-[10px] font-black uppercase opacity-40">Score</span>
-            <span className="font-black text-5xl leading-none">{score}</span>
+            <span className="text-[8px] md:text-[10px] font-black uppercase opacity-40">Score</span>
+            <span className="font-black text-2xl md:text-5xl leading-none">{score}</span>
           </div>
-          <div className="w-px h-12 bg-black opacity-10" />
+          <div className="w-px h-6 md:h-12 bg-black opacity-10" />
           <div className="flex flex-col items-center">
-            <span className="text-[10px] font-black uppercase opacity-40">High</span>
-            <span className="font-black text-5xl leading-none text-orange-500">{highScore}</span>
+            <span className="text-[8px] md:text-[10px] font-black uppercase opacity-40">High</span>
+            <span className="font-black text-2xl md:text-5xl leading-none text-orange-500">{highScore}</span>
           </div>
         </div>
       </div>
 
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-yellow-400/60 backdrop-blur-md z-50 p-6">
-          <div className="bg-white border-8 border-black p-12 shadow-brutal-lg text-center">
-            <div className="mb-6 inline-block bg-pina-navy text-pina-yellow px-6 py-2 text-sm font-black tracking-widest uppercase">
+        <div className="absolute inset-0 flex items-center justify-center bg-yellow-400/60 backdrop-blur-md z-50 p-4 md:p-6">
+          <div className="bg-white border-4 md:border-8 border-black p-6 md:p-12 shadow-brutal-lg text-center">
+            <div className="mb-4 md:mb-6 inline-block bg-pina-navy text-pina-yellow px-3 py-1 md:px-6 md:py-2 text-xs md:text-sm font-black tracking-widest uppercase">
               LOADING...
             </div>
-            <div className="flex gap-2 justify-center">
-              <div className="w-4 h-4 bg-pina-pink rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-4 h-4 bg-pina-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-              <div className="w-4 h-4 bg-pina-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            <div className="flex gap-1.5 md:gap-2 justify-center">
+              <div className="w-3 h-3 md:w-4 md:h-4 bg-pina-pink rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-3 h-3 md:w-4 md:h-4 bg-pina-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-3 h-3 md:w-4 md:h-4 bg-pina-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
             </div>
           </div>
         </div>
@@ -491,26 +546,26 @@ export function GamePage() {
         <div className="absolute inset-0 flex items-center justify-center bg-yellow-400/40 backdrop-blur-md z-50 p-6 pointer-events-none" aria-hidden />
       )}
       {isReady && (
-        <div className="absolute inset-0 flex items-center justify-center z-50 p-6 pointer-events-none">
-          <div className="pointer-events-auto bg-white border-8 border-black p-8 max-w-lg w-full shadow-brutal-lg transform -rotate-1 text-center relative">
+        <div className="absolute inset-0 flex items-center justify-center z-50 p-3 md:p-6 pointer-events-none">
+          <div className="pointer-events-auto bg-white border-4 md:border-8 border-black p-4 md:p-8 max-w-lg w-full shadow-brutal-lg transform -rotate-1 text-center relative">
             <Link
               to={ROUTES.HOME}
-              className="absolute top-4 left-4 inline-flex items-center gap-1 bg-stone-200 text-black px-3 py-1.5 border-2 border-black font-bold text-sm shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
+              className="absolute top-2 left-2 md:top-4 md:left-4 inline-flex items-center gap-1 bg-stone-200 text-black px-2 py-1 md:px-3 md:py-1.5 border-2 border-black font-bold text-xs md:text-sm shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
               onClick={(e) => e.stopPropagation()}
             >
               ← HOME
             </Link>
-            <div className="mb-3 inline-block bg-pina-navy text-pina-yellow px-4 py-1 text-xs font-black tracking-widest uppercase">
+            <div className="mb-2 md:mb-3 inline-block bg-pina-navy text-pina-yellow px-2 py-0.5 md:px-4 md:py-1 text-[10px] md:text-xs font-black tracking-widest uppercase">
               Pinatoy&apos;s Game
             </div>
-            <h1 className="text-5xl md:text-6xl font-black italic tracking-tighter mb-3 uppercase leading-none">
+            <h1 className="text-3xl md:text-6xl font-black italic tracking-tighter mb-2 md:mb-3 uppercase leading-none">
               Collect Joy!
             </h1>
-            <p className="text-xl font-bold mb-6 text-pina-pink underline decoration-4 underline-offset-4">
+            <p className="text-base md:text-xl font-bold mb-4 md:mb-6 text-pina-pink underline decoration-2 md:decoration-4 underline-offset-4">
               3D SUPER RUNNER
             </p>
-            <p className="text-sm font-bold text-black mb-4">キャラクターを選んでスタート</p>
-            <div className="mb-6 flex gap-3 justify-center flex-wrap">
+            <p className="text-xs md:text-sm font-bold text-black mb-3 md:mb-4">キャラクターを選んでスタート</p>
+            <div className="mb-4 md:mb-6 flex gap-2 md:gap-3 justify-center flex-wrap">
               {RUNNER_OPTIONS.map((opt) => (
                 <button
                   key={opt.id}
@@ -519,7 +574,7 @@ export function GamePage() {
                     e.stopPropagation()
                     setSelectedModel(opt.id)
                   }}
-                  className={`rounded-xl border-4 border-black px-5 py-2.5 font-bold uppercase transition-all active:scale-95 ${
+                  className={`rounded-lg md:rounded-xl border-2 md:border-4 border-black px-3 py-1.5 md:px-5 md:py-2.5 font-bold text-sm md:text-base uppercase transition-all active:scale-95 ${
                     selectedModel === opt.id
                       ? 'bg-pina-pink text-white shadow-brutal-sm'
                       : 'bg-stone-200 text-black shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none'
@@ -535,7 +590,7 @@ export function GamePage() {
                 e.stopPropagation()
                 startGame()
               }}
-              className="w-full bg-pina-pink text-white border-4 border-black py-5 text-2xl font-black shadow-brutal-lg active:translate-y-2 active:shadow-none transition-all hover:bg-pink-600"
+              className="w-full bg-pina-pink text-white border-2 md:border-4 border-black py-3 md:py-5 text-lg md:text-2xl font-black shadow-brutal-lg active:translate-y-2 active:shadow-none transition-all hover:bg-pink-600"
             >
               START GAME
             </button>
@@ -544,18 +599,18 @@ export function GamePage() {
       )}
 
       {isGameOver && (
-        <div className="absolute inset-0 flex items-center justify-center z-50 p-6 pointer-events-none">
-          <div className="pointer-events-auto bg-white border-8 border-black p-8 max-w-lg w-full shadow-brutal-lg transform -rotate-1 text-center relative">
+        <div className="absolute inset-0 flex items-center justify-center z-50 p-3 md:p-6 pointer-events-none">
+          <div className="pointer-events-auto bg-white border-4 md:border-8 border-black p-4 md:p-8 max-w-lg w-full shadow-brutal-lg transform -rotate-1 text-center relative">
             <Link
               to={ROUTES.HOME}
-              className="absolute top-4 left-4 inline-flex items-center gap-1 bg-stone-200 text-black px-3 py-1.5 border-2 border-black font-bold text-sm shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
+              className="absolute top-2 left-2 md:top-4 md:left-4 inline-flex items-center gap-1 bg-stone-200 text-black px-2 py-1 md:px-3 md:py-1.5 border-2 border-black font-bold text-xs md:text-sm shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
               onClick={(e) => e.stopPropagation()}
             >
               ← HOME
             </Link>
-            <h2 className="text-5xl font-black mb-4 uppercase text-red-500 italic">ざんねん！</h2>
-            <div className="my-8 py-6 border-y-8 border-black border-dashed">
-              <p className="text-7xl font-black tracking-tighter leading-none">{score}</p>
+            <h2 className="text-3xl md:text-5xl font-black mb-3 md:mb-4 uppercase text-red-500 italic">ざんねん！</h2>
+            <div className="my-4 py-4 md:my-8 md:py-6 border-y-4 md:border-y-8 border-black border-dashed">
+              <p className="text-4xl md:text-7xl font-black tracking-tighter leading-none">{score}</p>
             </div>
             <button
               type="button"
@@ -563,7 +618,7 @@ export function GamePage() {
                 e.stopPropagation()
                 restartStore()
               }}
-              className="w-full bg-pina-navy text-pina-yellow border-4 border-black py-5 text-2xl font-black shadow-brutal-lg active:translate-y-2 active:shadow-none transition-all hover:bg-blue-900"
+              className="w-full bg-pina-navy text-pina-yellow border-2 md:border-4 border-black py-3 md:py-5 text-lg md:text-2xl font-black shadow-brutal-lg active:translate-y-2 active:shadow-none transition-all hover:bg-blue-900"
             >
               RETRY
             </button>
@@ -571,8 +626,8 @@ export function GamePage() {
         </div>
       )}
 
-      <div className="absolute bottom-10 left-10 pointer-events-none hidden lg:block">
-        <div className="bg-pina-navy text-pina-yellow px-8 py-3 border-4 border-black font-black italic text-2xl shadow-brutal">
+      <div className="absolute bottom-4 left-4 md:bottom-10 md:left-10 pointer-events-none hidden sm:block">
+        <div className="bg-pina-navy text-pina-yellow px-3 py-1.5 md:px-8 md:py-3 border-2 md:border-4 border-black font-black italic text-sm md:text-2xl shadow-brutal">
           PINATOY'S
         </div>
       </div>
