@@ -492,6 +492,24 @@ export function GamePage() {
     }
   }, [isReady, isGameOver])
 
+  // 画面回転・リサイズ時もスクロール案内を再判定
+  const resizeCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    if (!isReady && !isGameOver) return
+    const onResize = () => {
+      if (resizeCheckRef.current) clearTimeout(resizeCheckRef.current)
+      resizeCheckRef.current = setTimeout(checkScrollHint, 150)
+    }
+    window.addEventListener('resize', onResize)
+    window.addEventListener('orientationchange', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onResize)
+      if (resizeCheckRef.current) clearTimeout(resizeCheckRef.current)
+      resizeCheckRef.current = null
+    }
+  }, [isReady, isGameOver])
+
   return (
     <div className="w-full h-screen bg-pina-yellow font-sans overflow-hidden select-none relative">
       {showRotateModal && (
