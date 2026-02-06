@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { ShoppingCart, Menu, X } from 'lucide-react'
 import { NAV_LINKS } from '../../config/constants'
 import { useUIStore } from '../../stores/useUIStore'
@@ -10,23 +11,34 @@ export function Header() {
     <header className="sticky top-0 z-40 w-full min-w-0 px-4 py-4 md:px-6">
       <div className="mx-auto min-w-0 max-w-6xl">
         <div className="flex min-w-0 items-center justify-between gap-2 rounded-xl border-4 border-black bg-pina-yellow px-3 py-2 shadow-brutal sm:gap-4 md:rounded-2xl md:border-[6px] md:px-6 md:py-4">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="flex shrink-0 items-center rounded-lg border-4 border-black bg-pina-navy px-4 py-2 font-black italic text-pina-yellow text-xl md:text-2xl"
           >
-            PINATOY'S
-          </a>
+            PINATOY&apos;S
+          </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="font-bold uppercase tracking-wide text-black hover:text-pink-500 transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) =>
+              link.href.startsWith('/') ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="font-bold uppercase tracking-wide text-black hover:text-pink-500 transition-colors"
+                  onClick={() => console.log('Navigating to:', link.href)}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="font-bold uppercase tracking-wide text-black hover:text-pink-500 transition-colors"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -50,16 +62,30 @@ export function Header() {
 
         {isMobileMenuOpen && (
           <nav className="mt-2 flex flex-col gap-2 rounded-2xl border-4 border-black bg-white p-4 shadow-brutal md:hidden">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="rounded-lg border-2 border-black px-4 py-3 font-bold uppercase text-black"
-                onClick={() => useUIStore.getState().closeMobileMenu()}
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) =>
+              link.href.startsWith('/') ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="rounded-lg border-2 border-black px-4 py-3 font-bold uppercase text-black"
+                  onClick={() => {
+                    console.log('Mobile: Navigating to:', link.href)
+                    useUIStore.getState().closeMobileMenu()
+                  }}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="rounded-lg border-2 border-black px-4 py-3 font-bold uppercase text-black"
+                  onClick={() => useUIStore.getState().closeMobileMenu()}
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </nav>
         )}
       </div>
