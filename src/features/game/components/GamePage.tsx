@@ -476,10 +476,20 @@ export function GamePage() {
       return
     }
     setShowScrollHint(true)
-    const t = requestAnimationFrame(() => {
-      requestAnimationFrame(checkScrollHint)
-    })
-    return () => cancelAnimationFrame(t)
+    // レイアウト・フォント確定後に判定（rAFだけだと早すぎる場合がある）
+    const t1 = setTimeout(checkScrollHint, 50)
+    const t2 = setTimeout(checkScrollHint, 250)
+    const el = scrollContainerRef.current
+    let ro: ResizeObserver | null = null
+    if (el) {
+      ro = new ResizeObserver(() => checkScrollHint())
+      ro.observe(el)
+    }
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      ro?.disconnect()
+    }
   }, [isReady, isGameOver])
 
   return (
