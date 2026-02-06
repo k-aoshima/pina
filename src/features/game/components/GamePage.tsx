@@ -78,6 +78,8 @@ export function GamePage() {
   })
 
   const [showRotateModal, setShowRotateModal] = useState(false)
+  const [showScrollHint, setShowScrollHint] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
   const updateRotateModal = () => {
     const w = window.innerWidth
@@ -96,6 +98,11 @@ export function GamePage() {
       window.removeEventListener('orientationchange', updateRotateModal)
     }
   }, [])
+
+  const handleModalScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget
+    if (el.scrollTop > 15) setShowScrollHint(false)
+  }
 
   const startGame = () => {
     startGameStore()
@@ -456,6 +463,25 @@ export function GamePage() {
   const isGameOver = status === 'gameover'
   const isPlaying = status === 'playing'
 
+  const checkScrollHint = () => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    const needsScroll = el.scrollHeight > el.clientHeight + 2
+    setShowScrollHint(needsScroll)
+  }
+
+  useEffect(() => {
+    if (!isReady && !isGameOver) {
+      setShowScrollHint(false)
+      return
+    }
+    setShowScrollHint(true)
+    const t = requestAnimationFrame(() => {
+      requestAnimationFrame(checkScrollHint)
+    })
+    return () => cancelAnimationFrame(t)
+  }, [isReady, isGameOver])
+
   return (
     <div className="w-full h-screen bg-pina-yellow font-sans overflow-hidden select-none relative">
       {showRotateModal && (
@@ -547,7 +573,13 @@ export function GamePage() {
       )}
       {isReady && (
         <div className="absolute inset-0 flex items-center justify-center z-50 p-2 md:p-6 pointer-events-none overflow-y-auto">
-          <div className="pointer-events-auto bg-white border-2 md:border-8 border-black p-3 md:p-8 w-full w-full max-w-sm md:max-w-lg max-h-[min(90dvh,100%)] overflow-y-auto shadow-brutal-sm md:shadow-brutal-lg transform md:-rotate-1 text-center relative my-auto">
+          <div
+            ref={(el) => {
+              if (isReady) scrollContainerRef.current = el
+            }}
+            onScroll={handleModalScroll}
+            className="pointer-events-auto bg-white border-2 md:border-8 border-black p-3 md:p-8 w-full w-full max-w-sm md:max-w-lg max-h-[min(90dvh,100%)] overflow-y-auto shadow-brutal-sm md:shadow-brutal-lg transform md:-rotate-1 text-center relative my-auto"
+          >
             <Link
               to={ROUTES.HOME}
               className="absolute top-1 left-1 md:top-4 md:left-4 inline-flex items-center gap-1 bg-stone-200 text-black px-1.5 py-0.5 md:px-3 md:py-1.5 border-2 border-black font-bold text-[10px] md:text-sm shadow-sm md:shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
@@ -594,13 +626,27 @@ export function GamePage() {
             >
               START GAME
             </button>
+            {showScrollHint && (
+              <div className="absolute top-1 right-1 md:hidden flex flex-col items-center text-black/60 animate-scroll-hint" aria-hidden>
+                <span className="text-[8px] font-bold">スクロール</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {isGameOver && (
         <div className="absolute inset-0 flex items-center justify-center z-50 p-2 md:p-6 pointer-events-none overflow-y-auto">
-          <div className="pointer-events-auto bg-white border-2 md:border-8 border-black p-3 md:p-8 w-full w-full max-w-sm md:max-w-lg max-h-[min(90dvh,100%)] overflow-y-auto shadow-brutal-sm md:shadow-brutal-lg transform md:-rotate-1 text-center relative my-auto">
+          <div
+            ref={(el) => {
+              if (isGameOver) scrollContainerRef.current = el
+            }}
+            onScroll={handleModalScroll}
+            className="pointer-events-auto bg-white border-2 md:border-8 border-black p-3 md:p-8 w-full w-full max-w-sm md:max-w-lg max-h-[min(90dvh,100%)] overflow-y-auto shadow-brutal-sm md:shadow-brutal-lg transform md:-rotate-1 text-center relative my-auto"
+          >
             <Link
               to={ROUTES.HOME}
               className="absolute top-1 left-1 md:top-4 md:left-4 inline-flex items-center gap-1 bg-stone-200 text-black px-1.5 py-0.5 md:px-3 md:py-1.5 border-2 border-black font-bold text-[10px] md:text-sm shadow-sm md:shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
@@ -622,6 +668,14 @@ export function GamePage() {
             >
               RETRY
             </button>
+            {showScrollHint && (
+              <div className="absolute top-1 right-1 md:hidden flex flex-col items-center text-black/60 animate-scroll-hint" aria-hidden>
+                <span className="text-[8px] font-bold">スクロール</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       )}

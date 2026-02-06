@@ -18,10 +18,15 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        'scroll-hint': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(4px)' },
+        },
       },
       animation: {
         'bounce-toy': 'bounce 1s infinite',
         marquee: 'marquee 25s linear infinite',
+        'scroll-hint': 'scroll-hint 1.5s ease-in-out infinite',
       },
     },
   },
