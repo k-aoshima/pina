@@ -41,8 +41,9 @@
 | スタイリング | Tailwind CSS 3 |
 | 状態管理 | Zustand 5 |
 | ルーティング | React Router DOM 7 |
-| 3D レンダリング | Three.js + @react-three/fiber + @react-three/drei |
+| 3D レンダリング | Three.js 0.182 + @react-three/fiber + @react-three/drei |
 | アイコン | lucide-react |
+| ユーティリティ | clsx |
 | リンター | ESLint 9 |
 
 ---
@@ -56,15 +57,20 @@ src/
 │   ├── layouts/      # Header / Footer / MainLayout
 │   ├── three/        # Three.js 共通コンポーネント（ModelView360, GlbMesh, STLMesh ...）
 │   └── ui/           # Button / Card / Label / Modal
-├── config/           # 共有定数
+├── config/           # 共有定数（modelAssetUrl, COLORS, NAV_LINKS）
 ├── features/
-│   ├── game/         # 3D ランナーゲーム一式（Runner3D, GamePage, useGameStore）
+│   ├── game/
+│   │   ├── components/   # GamePage, RotateModal, LoadingOverlay, ReadyModal, GameOverModal
+│   │   ├── constants/    # gameConstants.ts（物理定数・RUNNER_OPTIONS）
+│   │   ├── game/         # Runner3D.ts, sceneSetup.ts, obstacleUtils.ts
+│   │   ├── hooks/        # useGameEngine, useRotateModal, useScrollHint
+│   │   └── stores/       # useGameStore（スコア・状態・RunnerModel 型）
 │   ├── hero/         # パララックスヒーローセクション
 │   └── products/     # 商品データ、グリッド、モーダル、useProductStore
 ├── hooks/            # useScrollPosition など
 ├── stores/           # グローバル UI ストア（useUIStore）
 ├── types/            # 型定義
-└── utils/            # cn（Tailwind クラス結合）、format
+└── utils/            # cn（Tailwind クラス結合）
 public/
 ├── models/           # 3D モデルアセット（Rabbit.stl, FanFan.stl, Tako.glb）
 ├── figures/          # 商品サムネイル画像
@@ -112,3 +118,13 @@ yarn lint
 2. **サムネイル画像を追加** — `public/figures/` に画像を配置
 3. **商品データを追加** — `src/features/products/data/products.ts` にエントリを追記
 4. `ProductCard` / `ProductModal` は自動的に新エントリを描画します
+
+---
+
+## ランナーキャラクターの追加手順
+
+1. **3D モデルを追加** — `public/models/` に `.stl` または `.glb` を配置
+2. **Runner3D.ts を更新** — `RUNNER_COLORS`・`RUNNER_SCALES`・`RUNNER_Y_OFFSETS`・`RUNNER_BASE_ROTATIONS` に新キャラクターのエントリを追加
+3. **型定義を更新** — `useGameStore.ts` の `RunnerModel` 型にキャラクター名を追加
+4. **選択肢を追加** — `gameConstants.ts` の `RUNNER_OPTIONS` に `{ id, label }` エントリを追加
+5. **ヒーロー演出に追加** — `FallingModelsScene.tsx` の `MODEL_URLS` にモデル URL を追加
