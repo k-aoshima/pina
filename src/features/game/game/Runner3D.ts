@@ -177,6 +177,32 @@ export class Runner3D {
     this.model.rotation.z = this.baseRotationZ
   }
 
+  dispose(): void {
+    if (this.model) {
+      this.model.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh
+          mesh.geometry?.dispose()
+          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+          for (const mat of materials) {
+            if (!mat) continue
+            // Dispose all possible texture maps
+            const stdMat = mat as THREE.MeshStandardMaterial
+            stdMat.map?.dispose()
+            stdMat.normalMap?.dispose()
+            stdMat.roughnessMap?.dispose()
+            stdMat.metalnessMap?.dispose()
+            stdMat.emissiveMap?.dispose()
+            stdMat.aoMap?.dispose()
+            mat.dispose()
+          }
+        }
+      })
+      if (this.scene) this.scene.remove(this.model)
+      this.model = null
+    }
+  }
+
   getModel(): THREE.Object3D | null {
     return this.model
   }

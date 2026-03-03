@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useProductStore } from '../stores/useProductStore'
+import { useProductViewColor } from '../hooks/useProductViewColor'
 import { formatPrice } from '../../../utils/format'
 import { modelAssetUrl } from '../../../config/constants'
 import { Modal } from '../../../components/ui/Modal'
@@ -19,16 +20,18 @@ export function ProductModal() {
   const isModalOpen = useProductStore((s) => s.isModalOpen)
   const closeModal = useProductStore((s) => s.closeModal)
   const clearProduct = useProductStore((s) => s.clearProduct)
-  const selectedViewColorByProductId = useProductStore((s) => s.selectedViewColorByProductId)
   const setSelectedViewColor = useProductStore((s) => s.setSelectedViewColor)
-  const [viewColor, setViewColor] = useState<string>(VIEW_COLORS[0].hex)
+  const storedColor = useProductViewColor(
+    selectedProduct?.id ?? '',
+    selectedProduct?.color ?? VIEW_COLORS[0].hex
+  )
+  const [viewColor, setViewColor] = useState<string>(storedColor)
 
   useEffect(() => {
     if (selectedProduct?.modelUrl) {
-      const stored = selectedProduct?.id && selectedViewColorByProductId[selectedProduct.id]
-      setViewColor(stored ?? selectedProduct.color)
+      setViewColor(storedColor)
     }
-  }, [selectedProduct?.id, selectedProduct?.color, selectedProduct?.modelUrl, selectedViewColorByProductId])
+  }, [selectedProduct?.id, selectedProduct?.modelUrl, storedColor])
 
   const handleClose = () => {
     closeModal()

@@ -25,7 +25,7 @@ export function Header() {
                   key={link.label}
                   to={link.href}
                   className="font-bold uppercase tracking-wide text-black hover:text-pink-500 transition-colors"
-                  onClick={() => console.log('Navigating to:', link.href)}
+                  onClick={() => {}}
                 >
                   {link.label}
                 </Link>
@@ -69,7 +69,6 @@ export function Header() {
                   to={link.href}
                   className="rounded-lg border-2 border-black px-4 py-3 font-bold uppercase text-black"
                   onClick={() => {
-                    console.log('Mobile: Navigating to:', link.href)
                     useUIStore.getState().closeMobileMenu()
                   }}
                 >

@@ -11,8 +11,6 @@ export function App() {
   const location = useLocation()
   
   useEffect(() => {
-    console.log('🔍 Current route:', location.pathname)
-    console.log('🔍 ROUTES.GAME:', ROUTES.GAME)
   }, [location])
 
   return (

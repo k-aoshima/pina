@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import type { Mesh, MeshStandardMaterial } from 'three'
-import { Box3, Vector3 } from 'three'
+import { normalizeModelBounds } from './modelUtils'
 
 interface GlbMeshProps {
   url: string
@@ -15,16 +15,7 @@ export function GlbMesh({ url, color = '#1e293b', scale = 1, upright = false }: 
   const { scene } = useGLTF(url)
   const cloned = useMemo(() => scene.clone(), [scene])
 
-  const normalized = useMemo(() => {
-    const box = new Box3().setFromObject(cloned)
-    const size = new Vector3()
-    const center = new Vector3()
-    box.getSize(size)
-    box.getCenter(center)
-    const maxDim = Math.max(size.x, size.y, size.z)
-    const scaleFactor = maxDim > 0 ? 1 / maxDim : 1
-    return { center, scaleFactor }
-  }, [cloned])
+  const normalized = useMemo(() => normalizeModelBounds(cloned), [cloned])
 
   useMemo(() => {
     if (!color) return

@@ -5,6 +5,7 @@ export interface GameScene {
   camera: THREE.PerspectiveCamera
   renderer: THREE.WebGLRenderer
   groundDots: THREE.Group
+  cleanup: () => void
 }
 
 export function createGameScene(container: HTMLDivElement): GameScene {
@@ -58,5 +59,20 @@ export function createGameScene(container: HTMLDivElement): GameScene {
   }
   scene.add(dotsGroup)
 
-  return { scene, camera, renderer, groundDots: dotsGroup }
+  const cleanup = () => {
+    // Dispose dot geometry and material (shared across all dot meshes)
+    dotGeo.dispose()
+    dotMat.dispose()
+
+    // Dispose ground mesh resources
+    const groundGeo = ground.geometry
+    const groundMat = ground.material as THREE.MeshStandardMaterial
+    groundGeo.dispose()
+    groundMat.dispose()
+
+    // Dispose directional light shadow map
+    dirLight.shadow.map?.dispose()
+  }
+
+  return { scene, camera, renderer, groundDots: dotsGroup, cleanup }
 }

@@ -7,6 +7,11 @@ import {
   OBSTACLE_MIN_DISTANCE,
 } from '../constants/gameConstants'
 
+interface ObstacleUserData {
+  speed: number
+  scaleY: number
+}
+
 interface ObstacleState {
   scene: THREE.Scene | null
   obstacles: THREE.Mesh[]
@@ -41,8 +46,8 @@ export function trySpawnObstacle(state: ObstacleState, setScore: (n: number) => 
   obs.scale.y = scaleY
   obs.position.set(25, 0.8 + (scaleY - 1) * 0.6, 0)
   obs.castShadow = true
-  obs.userData.speed = speed
-  obs.userData.scaleY = scaleY
+  ;(obs.userData as ObstacleUserData).speed = speed
+  ;(obs.userData as ObstacleUserData).scaleY = scaleY
   state.scene!.add(obs)
   state.obstacles.push(obs)
   state.obstacleTimer = 0
@@ -55,7 +60,7 @@ export function updateObstacles(state: ObstacleState, endGame: () => void): void
   for (let i = state.obstacles.length - 1; i >= 0; i--) {
     const obs = state.obstacles[i]
     if (!obs) continue
-    const speed = (obs.userData.speed as number) ?? 0.22
+    const speed = (obs.userData as ObstacleUserData).speed ?? 0.22
     obs.position.x -= speed
     obs.rotation.y += 0.02
 

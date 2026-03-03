@@ -1,6 +1,6 @@
 import { useLoader } from '@react-three/fiber'
 import { useMemo } from 'react'
-import { Vector3 } from 'three'
+import { normalizeGeometryBounds } from './modelUtils'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 import type { BufferGeometry } from 'three'
 
@@ -13,17 +13,7 @@ interface STLMeshProps {
 export function STLMesh({ url, color = '#1e293b', scale = 1 }: STLMeshProps) {
   const geometry = useLoader(STLLoader, url) as BufferGeometry
 
-  const normalized = useMemo(() => {
-    geometry.computeBoundingBox()
-    const box = geometry.boundingBox!
-    const size = new Vector3()
-    const center = new Vector3()
-    box.getSize(size)
-    box.getCenter(center)
-    const maxDim = Math.max(size.x, size.y, size.z)
-    const scaleFactor = maxDim > 0 ? 1 / maxDim : 1
-    return { center, scaleFactor }
-  }, [geometry])
+  const normalized = useMemo(() => normalizeGeometryBounds(geometry), [geometry])
 
   const s = scale * normalized.scaleFactor
   const cx = -normalized.center.x * normalized.scaleFactor * scale

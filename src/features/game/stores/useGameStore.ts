@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 export type RunnerModel = 'FanFan' | 'Rabbit' | 'Tako'
 
-export type GameStatus = 'loading' | 'ready' | 'playing' | 'gameover'
+export type GameStatus = 'loading' | 'ready' | 'playing' | 'gameover' | 'error'
 
 const HIGH_SCORE_KEY = 'pina-game-high-score'
 

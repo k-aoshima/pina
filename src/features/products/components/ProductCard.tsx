@@ -1,6 +1,7 @@
 import { Eye } from 'lucide-react'
 import type { Product } from '../../../types'
 import { useProductStore } from '../stores/useProductStore'
+import { useProductViewColor } from '../hooks/useProductViewColor'
 import { formatPrice } from '../../../utils/format'
 import { CategoryBadge } from './CategoryBadge'
 import { modelAssetUrl } from '../../../config/constants'
@@ -13,8 +14,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const openModal = useProductStore((s) => s.openModal)
-  const selectedViewColorByProductId = useProductStore((s) => s.selectedViewColorByProductId)
-  const previewColor = selectedViewColorByProductId[product.id] ?? product.color
+  const previewColor = useProductViewColor(product.id, product.color)
 
   return (
     <article className="box-border flex w-full flex-col rounded-lg border-2 border-black bg-white shadow-brutal-sm sm:rounded-xl sm:border-4 sm:shadow-brutal-sm md:rounded-2xl md:border-6 md:shadow-brutal">

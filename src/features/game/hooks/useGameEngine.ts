@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import * as THREE from 'three'
 import { useGameStore } from '../stores/useGameStore'
 import { Runner3D, RUNNER_Y_OFFSETS } from '../game/Runner3D'
-import { PLAYER_X, JUMP_FORCE, GRAVITY, MAX_JUMPS, getModelUrl } from '../constants/gameConstants'
+import { PLAYER_X, getModelUrl } from '../constants/gameConstants'
 import { createGameScene } from '../game/sceneSetup'
 import { trySpawnObstacle, updateObstacles } from '../game/obstacleUtils'
+import { useGamePhysics } from './useGamePhysics'
+import { useGameInput } from './useGameInput'
 
 export interface GameEngineAPI {
   mountRef: React.RefObject<HTMLDivElement | null>
@@ -28,13 +30,10 @@ export function useGameEngine(): GameEngineAPI {
     runner3D: Runner3D | null
     obstacles: THREE.Mesh[]
     groundDots: THREE.Group | null
-    isJumping: boolean
-    velocityY: number
-    posY: number
-    jumpsRemaining: number
     frameId: number | null
     obstacleTimer: number
     score: number
+    posY: number
     gameState: string
     lastObstacleScaleY: number
   }>({
@@ -44,16 +43,19 @@ export function useGameEngine(): GameEngineAPI {
     runner3D: null,
     obstacles: [],
     groundDots: null,
-    isJumping: false,
-    velocityY: 0,
-    posY: 0,
-    jumpsRemaining: MAX_JUMPS,
     frameId: null,
     obstacleTimer: 0,
     score: 0,
+    posY: 0,
     gameState: 'START',
     lastObstacleScaleY: 1,
   })
+
+  const getGameState = useCallback(() => gameRef.current.gameState, [])
+  const { physicsRef, jump, updatePhysics, resetPhysics } = useGamePhysics(getGameState)
+
+  // キーボード入力
+  useGameInput(status, jump)
 
   const startGame = () => {
     startGameStore()
@@ -72,19 +74,9 @@ export function useGameEngine(): GameEngineAPI {
     }
     gameRef.current.obstacles = []
 
-    gameRef.current.posY = 0
-    gameRef.current.velocityY = 0
-    gameRef.current.isJumping = false
-    gameRef.current.jumpsRemaining = MAX_JUMPS
+    resetPhysics()
     gameRef.current.obstacleTimer = 0
     gameRef.current.lastObstacleScaleY = 1
-  }
-
-  const jump = () => {
-    if (gameRef.current.gameState !== 'PLAYING' || gameRef.current.jumpsRemaining <= 0) return
-    gameRef.current.jumpsRemaining--
-    gameRef.current.isJumping = true
-    gameRef.current.velocityY = JUMP_FORCE
   }
 
   // コンポーネントマウント時にゲーム状態をリセット
@@ -117,7 +109,7 @@ export function useGameEngine(): GameEngineAPI {
 
     if (width === 0 || height === 0) return
 
-    const { scene, camera, renderer, groundDots } = createGameScene(mountRef.current)
+    const { scene, camera, renderer, groundDots, cleanup: cleanupScene } = createGameScene(mountRef.current)
 
     // Runner3D でモデルを読み込み
     const dummyCanvas = document.createElement('canvas')
@@ -131,8 +123,9 @@ export function useGameEngine(): GameEngineAPI {
           useGameStore.getState().setStatus('ready')
         }, 100)
       })
-      .catch(() => {
-        useGameStore.getState().setStatus('ready')
+      .catch((err) => {
+        console.error('Failed to load model:', err)
+        useGameStore.getState().setStatus('error')
       })
 
     gameRef.current.scene = scene
@@ -150,20 +143,10 @@ export function useGameEngine(): GameEngineAPI {
       const playerModel = runner?.getModel()
 
       if (gameRef.current.gameState === 'PLAYING') {
-        if (gameRef.current.isJumping || gameRef.current.posY > 0) {
-          gameRef.current.velocityY -= GRAVITY
-          gameRef.current.posY += gameRef.current.velocityY
-
-          if (gameRef.current.posY <= 0) {
-            gameRef.current.posY = 0
-            gameRef.current.velocityY = 0
-            gameRef.current.isJumping = false
-            gameRef.current.jumpsRemaining = MAX_JUMPS
-          }
-        }
+        updatePhysics()
 
         let runBounce = 0
-        if (gameRef.current.posY === 0) {
+        if (physicsRef.current.posY === 0) {
           runBounce = Math.abs(Math.sin(time * 15)) * 0.15
         }
 
@@ -172,7 +155,7 @@ export function useGameEngine(): GameEngineAPI {
           const modelOffset = RUNNER_Y_OFFSETS[runner.modelType]
           playerModel.position.set(
             PLAYER_X,
-            gameRef.current.posY + baseY + modelOffset + runBounce,
+            physicsRef.current.posY + baseY + modelOffset + runBounce,
             0,
           )
         }
@@ -183,6 +166,7 @@ export function useGameEngine(): GameEngineAPI {
         }
 
         gameRef.current.obstacleTimer++
+        gameRef.current.posY = physicsRef.current.posY
         trySpawnObstacle(gameRef.current, setScore)
         updateObstacles(gameRef.current, endGameStore)
       } else if (runner && playerModel) {
@@ -225,13 +209,15 @@ export function useGameEngine(): GameEngineAPI {
 
       if (gameRef.current.runner3D) {
         const runner = gameRef.current.runner3D
-        if (runner.model && runner.scene) runner.scene.remove(runner.model)
+        runner.dispose()
         if (runner.renderer) {
           runner.renderer.forceContextLoss()
           runner.renderer.dispose()
         }
         gameRef.current.runner3D = null
       }
+
+      cleanupScene()
 
       if (mountRef.current?.contains(renderer.domElement)) {
         mountRef.current.removeChild(renderer.domElement)
@@ -246,18 +232,6 @@ export function useGameEngine(): GameEngineAPI {
   useEffect(() => {
     gameRef.current.gameState =
       status === 'playing' ? 'PLAYING' : status === 'gameover' ? 'GAMEOVER' : 'START'
-  }, [status])
-
-  // キーボードハンドラ（Space/ArrowUp → jump）
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp') {
-        e.preventDefault()
-        if (status === 'playing') jump()
-      }
-    }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
   }, [status])
 
   return { mountRef, startGame, jump }
